@@ -12,7 +12,7 @@ Warning: plans created by LLMs can be incorrect and should be reviewed by a huma
 ## Install
 
 ```bash
-uv sync
+polars-nlq
 ```
 
 ## Quick Example
