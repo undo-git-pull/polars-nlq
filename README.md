@@ -12,7 +12,7 @@ Warning: plans created by LLMs can be incorrect and should be reviewed by a huma
 ## Install
 
 ```bash
-polars-nlq
+pip install polars-nlq
 ```
 
 ## Quick Example
