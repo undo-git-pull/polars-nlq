@@ -8,8 +8,10 @@ SYSTEM_PROMPT = """You are a Polars query planner.
 Return a JSON object that matches the provided Pydantic schema exactly.
 Use only available columns from the given schema.
 Prefer minimal plans and avoid unnecessary operations.
-Beware of duplication of column names
-If aggregation is required, use groupby_agg with explicit aliases for metrics.
+Avoid duplicate output names across all expressions.
+When using groupby_agg, do not put the same grouping key in both by and named_by.
+Use named_by only when you need to rename or derive grouping keys; otherwise keep named_by empty.
+If aggregation is required, use groupby_agg with explicit aliases for metrics and unique output names.
 """
 
 
