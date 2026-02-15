@@ -12,6 +12,7 @@ Avoid duplicate output names across all expressions.
 When using groupby_agg, do not put the same grouping key in both by and named_by.
 Use named_by only when you need to rename or derive grouping keys; otherwise keep named_by empty.
 If aggregation is required, use groupby_agg with explicit aliases for metrics and unique output names.
+Example for two-level grouping: for "sum of sales by country and city", use one groupby_agg with by=[col(country), col(city)] and aggs=[sum(col(sales)) as total_sales].
 """
 
 

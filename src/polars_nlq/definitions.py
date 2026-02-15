@@ -59,13 +59,25 @@ class Func(ExprBase):
     args: List["Expr"] = Field(default_factory=list)
 
 
+class TopK(ExprBase):
+    kind: Literal["topk"] = "topk"
+    expr: "Expr"
+    k: int = 5
+
+
+class BottomK(ExprBase):
+    kind: Literal["bottomk"] = "bottomk"
+    expr: "Expr"
+    k: int = 5
+
+
 class WhenThenOtherwise(ExprBase):
     kind: Literal["when_then_otherwise"] = "when_then_otherwise"
     branches: List[tuple["Expr", "Expr"]] = Field(default_factory=list)
     otherwise: Optional["Expr"] = None
 
 
-Expr = Union[Col, Lit, Unary, Binary, Func, WhenThenOtherwise]
+Expr = Union[Col, Lit, Unary, Binary, Func, TopK, BottomK, WhenThenOtherwise]
 
 
 class NamedExpr(BaseModel):
@@ -127,4 +139,6 @@ class Plan(BaseModel):
 Unary.model_rebuild()
 Binary.model_rebuild()
 Func.model_rebuild()
+TopK.model_rebuild()
+BottomK.model_rebuild()
 WhenThenOtherwise.model_rebuild()

@@ -1,5 +1,6 @@
 from polars_nlq.engine import execute_plan
 from polars_nlq.definitions import (
+    BottomK,
     Binary,
     BinaryOp,
     Col,
@@ -14,6 +15,7 @@ from polars_nlq.definitions import (
     Select,
     Sort,
     SortKey,
+    TopK,
     Unary,
     UnaryOp,
     WhenThenOtherwise,
@@ -25,6 +27,7 @@ from polars_nlq.nlq import nl_query
 __all__ = [
     "Binary",
     "BinaryOp",
+    "BottomK",
     "Col",
     "Expr",
     "Filter",
@@ -37,6 +40,7 @@ __all__ = [
     "Select",
     "Sort",
     "SortKey",
+    "TopK",
     "Unary",
     "UnaryOp",
     "WhenThenOtherwise",
@@ -44,4 +48,3 @@ __all__ = [
     "execute_plan",
     "nl_query",
 ]
-

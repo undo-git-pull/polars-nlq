@@ -3,6 +3,7 @@ from typing import Any, Mapping
 import polars as pl
 
 from polars_nlq.definitions import (
+    BottomK,
     Binary,
     BinaryOp,
     Col,
@@ -16,6 +17,7 @@ from polars_nlq.definitions import (
     Plan,
     Select,
     Sort,
+    TopK,
     Unary,
     UnaryOp,
     WhenThenOtherwise,
@@ -74,6 +76,14 @@ def _to_expr(expr: Expr) -> pl.Expr:
         args = [_to_expr(arg) for arg in expr.args]
         name = expr.name.lower().strip()
         return _apply_func(name, args)
+    if isinstance(expr, TopK):
+        if expr.k < 1:
+            raise ValueError("topk requires k >= 1")
+        return _to_expr(expr.expr).top_k(expr.k)
+    if isinstance(expr, BottomK):
+        if expr.k < 1:
+            raise ValueError("bottomk requires k >= 1")
+        return _to_expr(expr.expr).bottom_k(expr.k)
     if isinstance(expr, WhenThenOtherwise):
         if not expr.branches:
             raise ValueError("when_then_otherwise requires at least one branch")
