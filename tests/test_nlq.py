@@ -119,3 +119,32 @@ def test_execute_plan_top_2_cities_by_country() -> None:
         {"country": "France", "top2_city_sales": [50, 35]},
         {"country": "Japan", "top2_city_sales": [40, 22]},
     ]
+
+
+def test_execute_plan_bottom_1_city_by_country() -> None:
+    df = pl.DataFrame(
+        {
+            "country": ["France", "France", "France", "Japan", "Japan", "Japan"],
+            "city": ["Paris", "Lyon", "Marseille", "Tokyo", "Osaka", "Nagoya"],
+            "sales": [50, 35, 15, 10, 40, 22],
+        }
+    )
+    plan = Plan(
+        ops=[
+            GroupByAgg(
+                by=[Col(name="country"), Col(name="city")],
+                aggs=[NamedExpr(expr=Func(name="sum", args=[Col(name="sales")]), alias="total_sales")],
+            ),
+            GroupByAgg(
+                by=[Col(name="country")],
+                aggs=[NamedExpr(expr=BottomK(expr=Col(name="total_sales"), k=1), alias="bottom1_city_sales")],
+            ),
+        ]
+    )
+
+    result = execute_plan(df, plan).collect().sort("country")
+
+    assert result.to_dicts() == [
+        {"country": "France", "bottom1_city_sales": [15]},
+        {"country": "Japan", "bottom1_city_sales": [10]},
+    ]
