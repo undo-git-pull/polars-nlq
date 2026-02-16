@@ -13,6 +13,7 @@ When using groupby_agg, do not put the same grouping key in both by and named_by
 Use named_by only when you need to rename or derive grouping keys; otherwise keep named_by empty.
 If aggregation is required, use groupby_agg with explicit aliases for metrics and unique output names.
 Example for two-level grouping: for "sum of sales by country and city", use one groupby_agg with by=[col(country), col(city)] and aggs=[sum(col(sales)) as total_sales].
+For row counts, use count() with no literal arguments (do not use lit(1) or lit(true)).
 """
 
 
@@ -27,7 +28,13 @@ def _format_schema(schema: Mapping[str, Any] | Any) -> str:
     return "\n".join(f"- {name}: {dtype}" for name, dtype in items)
 
 
-def nl_query(client: Any, schema: Mapping[str, Any] | Any, question: str, model: str = "local-model") -> Plan:
+def nl_query(
+    client: Any,
+    schema: Mapping[str, Any] | Any,
+    question: str,
+    model: str = "local-model",
+    system_prompt: str = SYSTEM_PROMPT,
+) -> Plan:
     """Generate a typed query plan from natural language."""
     if not question.strip():
         raise ValueError("question must not be empty")
@@ -42,7 +49,7 @@ def nl_query(client: Any, schema: Mapping[str, Any] | Any, question: str, model:
         model=model,
         response_model=Plan,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {
                 "role": "user",
                 "content": (

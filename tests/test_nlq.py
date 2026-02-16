@@ -48,6 +48,23 @@ def test_nl_query_creates_plan_from_schema(tmp_path) -> None:
     assert client.chat.completions.kwargs["response_model"] is Plan
 
 
+def test_nl_query_allows_system_prompt_override(tmp_path) -> None:
+    csv_path = tmp_path / "sales.csv"
+    csv_path.write_text("city,sales\nSeoul,30\n", encoding="utf-8")
+
+    lf = pl.scan_csv(str(csv_path))
+    expected_plan = Plan(ops=[])
+    client = _FakeClient(expected_plan)
+    custom_prompt = "Custom planner prompt"
+
+    nl_query(client, lf.collect_schema(), "sum of sales by city", system_prompt=custom_prompt)
+
+    messages = client.chat.completions.kwargs["messages"]
+    assert isinstance(messages, list)
+    assert messages[0]["role"] == "system"
+    assert messages[0]["content"] == custom_prompt
+
+
 def test_execute_plan_groupby_agg(tmp_path) -> None:
     csv_path = tmp_path / "sales.csv"
     csv_path.write_text("city,sales\nSeoul,30\nParis,50\nSeoul,20\n", encoding="utf-8")
